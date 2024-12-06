@@ -29,7 +29,7 @@ Welcome to PlanejaMais, a financial management application designed to help you 
 
 1. Clone the repository:
   ```sh
-  git clone https://github.com/yourusername/PlanejaMais.git
+  git clone https://github.com/Josepch1/PlanejaMais.git
   ```
 2. Navigate to the project directory:
   ```sh
