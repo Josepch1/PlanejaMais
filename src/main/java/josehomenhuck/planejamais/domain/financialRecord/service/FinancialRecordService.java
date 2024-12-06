@@ -1,12 +1,21 @@
-package josehomenhuck.planejamais.domain.record.service;
+package josehomenhuck.planejamais.domain.financialRecord.service;
 
-import josehomenhuck.planejamais.application.record.dto.RecordRequest;
-import josehomenhuck.planejamais.application.record.dto.RecordResponse;
+import josehomenhuck.planejamais.application.financialRecord.dto.FinancialRecordRequest;
+import josehomenhuck.planejamais.application.financialRecord.dto.FinancialRecordResponse;
+import josehomenhuck.planejamais.application.financialRecord.dto.FinancialSummary;
 
 import java.util.List;
 
-public interface RecordService {
-    RecordResponse create(RecordRequest recordRequest);
+public interface FinancialRecordService {
+    FinancialRecordResponse create(FinancialRecordRequest recordRequest);
 
-    List<RecordResponse> findAll();
+    List<FinancialRecordResponse> findAll();
+
+    FinancialSummary getSummary();
+
+    FinancialRecordResponse update(Long id, FinancialRecordRequest recordRequest);
+
+    FinancialRecordResponse deleteById(Long id);
+
+    void deleteAll();
 }

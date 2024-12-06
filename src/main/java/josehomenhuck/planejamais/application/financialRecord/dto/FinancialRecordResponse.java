@@ -1,4 +1,4 @@
-package josehomenhuck.planejamais.application.record.dto;
+package josehomenhuck.planejamais.application.financialRecord.dto;
 
 import josehomenhuck.planejamais.domain.financialRecord.enums.FinancialRecordType;
 import lombok.*;
@@ -10,8 +10,10 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecordResponse {
+public class FinancialRecordResponse {
+    private Long id;
     private String description;
     private FinancialRecordType type;
-    private LocalDateTime createdAt;
+    private Double value;
+    private LocalDateTime date;
 }

@@ -1,9 +1,23 @@
 services:
   postgres:
     image: 'postgres:latest'
+    container_name: planejamais_postgres
+    restart: no
     environment:
-      - 'POSTGRES_DB=mydatabase'
-      - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=myuser'
+      - 'POSTGRES_DB=planejamais_db'
+      - 'POSTGRES_PASSWORD=planeja_pass'
+      - 'POSTGRES_USER=planeja_user'
     ports:
-      - '5432'
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - planejamais_network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  planejamais_network:
+    driver: bridge

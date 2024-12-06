@@ -1,4 +1,4 @@
-package josehomenhuck.planejamais.application.record.dto;
+package josehomenhuck.planejamais.application.financialRecord.dto;
 
 import josehomenhuck.planejamais.domain.financialRecord.enums.FinancialRecordType;
 import lombok.*;
@@ -11,4 +11,5 @@ import lombok.*;
 public class FinancialRecordRequest {
     private String description;
     private FinancialRecordType type;
+    private Double value;
 }

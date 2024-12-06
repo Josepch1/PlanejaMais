@@ -1,12 +1,13 @@
-package josehomenhuck.planejamais.domain.record.entity;
+package josehomenhuck.planejamais.domain.financialRecord.entity;
 
 import jakarta.persistence.*;
-import josehomenhuck.planejamais.domain.record.enums.RecordType;
+import josehomenhuck.planejamais.domain.financialRecord.enums.FinancialRecordType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Record {
+public class FinancialRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,9 +29,16 @@ public class Record {
 
     @Column
     @Enumerated(EnumType.STRING)
-    private RecordType type;
+    private FinancialRecordType type;
+
+    @Column
+    private Double value;
 
     @Column
     @CreatedDate
     private LocalDateTime createdAt;
+
+    @Column
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 }
