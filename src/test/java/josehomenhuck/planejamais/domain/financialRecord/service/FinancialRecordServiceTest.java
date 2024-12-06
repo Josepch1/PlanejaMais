@@ -88,6 +88,7 @@ class FinancialRecordServiceTest {
         assertEquals("Test", result.get(0).getDescription());
         assertEquals("SecondTest", result.get(1).getDescription());
         verify(financialRecordRepository).findAll();
+        verifyNoMoreInteractions(financialRecordRepository);
     }
 
     @Test
