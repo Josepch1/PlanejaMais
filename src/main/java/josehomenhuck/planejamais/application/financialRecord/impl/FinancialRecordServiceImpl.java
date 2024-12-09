@@ -6,6 +6,8 @@ import josehomenhuck.planejamais.application.financialRecord.dto.FinancialSummar
 import josehomenhuck.planejamais.application.financialRecord.mapper.FinancialRecordMapper;
 import josehomenhuck.planejamais.domain.financialRecord.entity.FinancialRecord;
 import josehomenhuck.planejamais.domain.financialRecord.service.FinancialRecordService;
+import josehomenhuck.planejamais.domain.user.entity.User;
+import josehomenhuck.planejamais.domain.user.service.UserService;
 import josehomenhuck.planejamais.infrastructure.repository.FinancialRecordRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,16 +19,26 @@ public class FinancialRecordServiceImpl implements FinancialRecordService {
 
     private final FinancialRecordRepository recordRepository;
     private final FinancialRecordMapper recordMapper;
+    private final UserService userService;
 
-    public FinancialRecordServiceImpl(FinancialRecordRepository recordRepository, FinancialRecordMapper recordMapper) {
+    public FinancialRecordServiceImpl(FinancialRecordRepository recordRepository, FinancialRecordMapper recordMapper, UserService userService) {
         this.recordRepository = recordRepository;
         this.recordMapper = recordMapper;
+        this.userService = userService;
     }
 
     @Override
     @Transactional
     public FinancialRecordResponse create(FinancialRecordRequest financialRecordRequest) {
+        User user = userService.findByEmail(financialRecordRequest.getUserEmail());
+
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
         FinancialRecord financialRecord = recordMapper.toRecord(financialRecordRequest);
+
+        financialRecord.setUser(user);
 
         FinancialRecord savedFinancialRecord = recordRepository.save(financialRecord);
 
@@ -34,8 +46,8 @@ public class FinancialRecordServiceImpl implements FinancialRecordService {
     }
 
     @Override
-    public List<FinancialRecordResponse> findAll() {
-        List<FinancialRecord> financialRecords = recordRepository.findAll();
+    public List<FinancialRecordResponse> findAllByUserEmail(String email) {
+        List<FinancialRecord> financialRecords = recordRepository.findAllByUserEmail(email);
 
         return financialRecords.stream()
                 .map(recordMapper::toRecordResponse)
@@ -43,8 +55,10 @@ public class FinancialRecordServiceImpl implements FinancialRecordService {
     }
 
     @Override
-    public FinancialSummary getSummary() {
-        List<FinancialRecord> financialRecords = recordRepository.findAll();
+    public FinancialSummary getSummary(String email) {
+        User user = userService.findByEmail(email);
+
+        List<FinancialRecord> financialRecords = recordRepository.findAllByUserEmail(user.getEmail());
 
         Double totalIncome = financialRecords.stream()
                 .filter(record -> record.getType().isIncome())
@@ -59,6 +73,7 @@ public class FinancialRecordServiceImpl implements FinancialRecordService {
         Double balance = totalIncome - totalExpense;
 
         return FinancialSummary.builder()
+                .user(user)
                 .totalIncome(totalIncome)
                 .totalExpense(totalExpense)
                 .balance(balance)

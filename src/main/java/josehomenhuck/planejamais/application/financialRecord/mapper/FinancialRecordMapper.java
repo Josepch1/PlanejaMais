@@ -3,6 +3,7 @@ package josehomenhuck.planejamais.application.financialRecord.mapper;
 import josehomenhuck.planejamais.application.financialRecord.dto.FinancialRecordRequest;
 import josehomenhuck.planejamais.application.financialRecord.dto.FinancialRecordResponse;
 import josehomenhuck.planejamais.domain.financialRecord.entity.FinancialRecord;
+import josehomenhuck.planejamais.domain.user.entity.User;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ public class FinancialRecordMapper {
 
         return FinancialRecordResponse.builder()
                 .id(financialRecord.getId())
+                .user(financialRecord.getUser())
                 .description(financialRecord.getDescription())
                 .type(financialRecord.getType())
                 .value(financialRecord.getValue())

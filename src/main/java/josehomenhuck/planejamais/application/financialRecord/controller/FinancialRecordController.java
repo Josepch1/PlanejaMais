@@ -1,5 +1,6 @@
 package josehomenhuck.planejamais.application.financialRecord.controller;
 
+import jakarta.websocket.server.PathParam;
 import josehomenhuck.planejamais.application.financialRecord.dto.FinancialRecordRequest;
 import josehomenhuck.planejamais.application.financialRecord.dto.FinancialRecordResponse;
 import josehomenhuck.planejamais.application.financialRecord.dto.FinancialSummary;
@@ -19,14 +20,14 @@ public class FinancialRecordController {
     }
 
     @GetMapping
-    public ResponseEntity<List<FinancialRecordResponse>> findAll() {
-        return ResponseEntity.ok(financialRecordService.findAll());
+    public ResponseEntity<List<FinancialRecordResponse>> findAllByUserEmail(@PathParam("email") String email) {
+        return ResponseEntity.ok(financialRecordService.findAllByUserEmail(email));
     }
 
 
     @GetMapping("/summary")
-    public ResponseEntity<FinancialSummary> getSummary() {
-        return ResponseEntity.ok(financialRecordService.getSummary());
+    public ResponseEntity<FinancialSummary> getSummary(@PathParam("email") String email) {
+        return ResponseEntity.ok(financialRecordService.getSummary(email));
     }
 
     @PostMapping

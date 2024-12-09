@@ -9,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FinancialRecordRequest {
+    private String userEmail;
     private String description;
     private FinancialRecordType type;
     private Double value;

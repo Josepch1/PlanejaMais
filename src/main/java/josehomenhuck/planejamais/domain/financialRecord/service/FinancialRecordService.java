@@ -9,9 +9,9 @@ import java.util.List;
 public interface FinancialRecordService {
     FinancialRecordResponse create(FinancialRecordRequest recordRequest);
 
-    List<FinancialRecordResponse> findAll();
+    List<FinancialRecordResponse> findAllByUserEmail(String email);
 
-    FinancialSummary getSummary();
+    FinancialSummary getSummary(String email);
 
     FinancialRecordResponse update(String id, FinancialRecordRequest recordRequest);
 

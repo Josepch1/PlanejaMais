@@ -2,6 +2,7 @@ package josehomenhuck.planejamais.domain.financialRecord.entity;
 
 import jakarta.persistence.*;
 import josehomenhuck.planejamais.domain.financialRecord.enums.FinancialRecordType;
+import josehomenhuck.planejamais.domain.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +24,10 @@ public class FinancialRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column
     private String description;
