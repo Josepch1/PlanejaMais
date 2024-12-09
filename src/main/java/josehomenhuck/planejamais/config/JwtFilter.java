@@ -8,6 +8,7 @@ import josehomenhuck.planejamais.application.jwt.JwtService;
 import josehomenhuck.planejamais.domain.user.entity.User;
 import josehomenhuck.planejamais.domain.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,8 +18,8 @@ import java.io.IOException;
 
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {
-  private final JwtService jwtService;
-  private final UserService userService;
+    private final JwtService jwtService;
+    private final UserService userService;
 
     public JwtFilter(JwtService jwtService, UserService userService) {
         this.jwtService = jwtService;
@@ -26,50 +27,53 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-      throws ServletException, IOException {
+    protected void doFilterInternal(
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain)
+            throws ServletException, IOException {
 
-    String token = extractToken(request);
+        String token = extractToken(request);
 
-    if (token != null) {
-      try {
-        String email = jwtService.getEmailByToken(token);
-        User user = userService.findByEmail(email);
+        if (token != null) {
+            try {
+                String email = jwtService.getEmailByToken(token);
+                User user = userService.findByEmail(email);
 
-        setUserAsAuthenticated(user);
-      } catch (Exception e) {
-        log.error("Error while authenticating user", e);
-      }
+                setUserAsAuthenticated(user);
+            } catch (Exception e) {
+                log.error("Error while authenticating user", e);
+            }
+        }
+
+        filterChain.doFilter(request, response);
     }
 
-    filterChain.doFilter(request, response);
-  }
+    private void setUserAsAuthenticated(User user) {
+        UserDetails userDetails = org.springframework.security.core.userdetails.User
+                .withUsername(user.getEmail())
+                .password(user.getPassword())
+                .roles("USER")
+                .build();
 
-  private void setUserAsAuthenticated(User user) {
-    UserDetails userDetails = org.springframework.security.core.userdetails.User
-        .withUsername(user.getEmail())
-        .password(user.getPassword())
-        .roles("USER")
-        .build();
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
+                userDetails.getAuthorities());
 
-    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
-        userDetails.getAuthorities());
-
-    SecurityContextHolder.getContext().setAuthentication(authentication);
-  }
-
-  private String extractToken(HttpServletRequest request) {
-    String bearerToken = request.getHeader("Authorization");
-
-    if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-      return bearerToken.split(" ")[1];
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
-    return null;
-  }
+    private String extractToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
 
-  @Override
-  protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-    return request.getRequestURI().contains("/v1/users");
-  }
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.split(" ")[1];
+        }
+
+        return null;
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return request.getRequestURI().contains("/v1/users");
+    }
 }
