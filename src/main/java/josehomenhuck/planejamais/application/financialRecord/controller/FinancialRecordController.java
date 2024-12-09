@@ -35,7 +35,7 @@ public class FinancialRecordController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<FinancialRecordResponse> update(@PathVariable Long id, @RequestBody FinancialRecordRequest financialRecordRequest) {
+    public ResponseEntity<FinancialRecordResponse> update(@PathVariable String id, @RequestBody FinancialRecordRequest financialRecordRequest) {
         return ResponseEntity.ok(financialRecordService.update(id, financialRecordRequest));
     }
 
@@ -46,7 +46,7 @@ public class FinancialRecordController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<FinancialRecordResponse> deleteById(@PathVariable Long id) {
+    public ResponseEntity<FinancialRecordResponse> deleteById(@PathVariable String id) {
         return ResponseEntity.ok(financialRecordService.deleteById(id));
     }
 }

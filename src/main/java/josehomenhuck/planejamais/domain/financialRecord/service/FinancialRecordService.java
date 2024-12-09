@@ -13,9 +13,9 @@ public interface FinancialRecordService {
 
     FinancialSummary getSummary();
 
-    FinancialRecordResponse update(Long id, FinancialRecordRequest recordRequest);
+    FinancialRecordResponse update(String id, FinancialRecordRequest recordRequest);
 
-    FinancialRecordResponse deleteById(Long id);
+    FinancialRecordResponse deleteById(String id);
 
     void deleteAll();
 }

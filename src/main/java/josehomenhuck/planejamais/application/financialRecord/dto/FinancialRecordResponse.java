@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FinancialRecordResponse {
-    private Long id;
+    private String id;
     private String description;
     private FinancialRecordType type;
     private Double value;

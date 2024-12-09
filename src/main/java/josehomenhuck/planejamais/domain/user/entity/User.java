@@ -1,7 +1,6 @@
-package josehomenhuck.planejamais.domain.financialRecord.entity;
+package josehomenhuck.planejamais.domain.user.entity;
 
 import jakarta.persistence.*;
-import josehomenhuck.planejamais.domain.financialRecord.enums.FinancialRecordType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,20 +18,19 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class FinancialRecord {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @Column
-    private String description;
+    private String name;
 
     @Column
-    @Enumerated(EnumType.STRING)
-    private FinancialRecordType type;
+    private String email;
 
     @Column
-    private Double value;
+    private String password;
 
     @Column
     @CreatedDate

@@ -67,7 +67,7 @@ public class FinancialRecordServiceImpl implements FinancialRecordService {
 
     @Override
     @Transactional
-    public FinancialRecordResponse update(Long id, FinancialRecordRequest financialRecordRequest) {
+    public FinancialRecordResponse update(String id, FinancialRecordRequest financialRecordRequest) {
         FinancialRecord financialRecord = recordRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Record not found"));
 
@@ -81,7 +81,7 @@ public class FinancialRecordServiceImpl implements FinancialRecordService {
     }
 
     @Override
-    public FinancialRecordResponse deleteById(Long id) {
+    public FinancialRecordResponse deleteById(String id) {
         FinancialRecord financialRecord = recordRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Record not found"));
 
