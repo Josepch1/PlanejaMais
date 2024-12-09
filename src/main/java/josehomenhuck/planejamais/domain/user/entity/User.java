@@ -12,7 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
 @Entity
-@Table
+@Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
 @Data
 @AllArgsConstructor
@@ -26,7 +26,7 @@ public class User {
     @Column
     private String name;
 
-    @Column
+    @Column(unique = true)
     private String email;
 
     @Column
