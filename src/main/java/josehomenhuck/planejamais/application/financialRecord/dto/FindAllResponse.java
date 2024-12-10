@@ -1,0 +1,14 @@
+package josehomenhuck.planejamais.application.financialRecord.dto;
+
+import josehomenhuck.planejamais.application.user.dto.UserResponse;
+import lombok.Builder;
+import lombok.Data;
+
+import java.util.List;
+
+@Data
+@Builder
+public class FindAllResponse {
+    private UserResponse user;
+    private List<FinancialRecordResponse> financialRecords;
+}

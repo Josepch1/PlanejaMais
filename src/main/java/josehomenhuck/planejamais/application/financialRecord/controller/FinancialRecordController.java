@@ -4,14 +4,13 @@ import jakarta.websocket.server.PathParam;
 import josehomenhuck.planejamais.application.financialRecord.dto.FinancialRecordRequest;
 import josehomenhuck.planejamais.application.financialRecord.dto.FinancialRecordResponse;
 import josehomenhuck.planejamais.application.financialRecord.dto.FinancialSummary;
+import josehomenhuck.planejamais.application.financialRecord.dto.FindAllResponse;
 import josehomenhuck.planejamais.domain.financialRecord.service.FinancialRecordService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/financial-record")
+@RequestMapping("/v1/financial-record")
 public class FinancialRecordController {
     private final FinancialRecordService financialRecordService;
 
@@ -20,7 +19,7 @@ public class FinancialRecordController {
     }
 
     @GetMapping
-    public ResponseEntity<List<FinancialRecordResponse>> findAllByUserEmail(@PathParam("email") String email) {
+    public ResponseEntity<FindAllResponse> findAllByUserEmail(@PathParam("email") String email) {
         return ResponseEntity.ok(financialRecordService.findAllByUserEmail(email));
     }
 

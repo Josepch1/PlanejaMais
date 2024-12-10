@@ -1,6 +1,6 @@
 package josehomenhuck.planejamais.application.financialRecord.dto;
 
-import josehomenhuck.planejamais.domain.user.entity.User;
+import josehomenhuck.planejamais.application.user.dto.UserResponse;
 import lombok.*;
 
 @Builder
@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FinancialSummary {
-    private User user;
+    private UserResponse user;
     private Double totalIncome;
     private Double totalExpense;
     private Double balance;

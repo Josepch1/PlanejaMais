@@ -3,7 +3,10 @@ package josehomenhuck.planejamais.application.financialRecord.impl;
 import josehomenhuck.planejamais.application.financialRecord.dto.FinancialRecordRequest;
 import josehomenhuck.planejamais.application.financialRecord.dto.FinancialRecordResponse;
 import josehomenhuck.planejamais.application.financialRecord.dto.FinancialSummary;
+import josehomenhuck.planejamais.application.financialRecord.dto.FindAllResponse;
 import josehomenhuck.planejamais.application.financialRecord.mapper.FinancialRecordMapper;
+import josehomenhuck.planejamais.application.user.dto.UserResponse;
+import josehomenhuck.planejamais.application.user.mapper.UserMapper;
 import josehomenhuck.planejamais.domain.financialRecord.entity.FinancialRecord;
 import josehomenhuck.planejamais.domain.financialRecord.service.FinancialRecordService;
 import josehomenhuck.planejamais.domain.user.entity.User;
@@ -20,11 +23,13 @@ public class FinancialRecordServiceImpl implements FinancialRecordService {
     private final FinancialRecordRepository recordRepository;
     private final FinancialRecordMapper recordMapper;
     private final UserService userService;
+    private final UserMapper userMapper;
 
-    public FinancialRecordServiceImpl(FinancialRecordRepository recordRepository, FinancialRecordMapper recordMapper, UserService userService) {
+    public FinancialRecordServiceImpl(FinancialRecordRepository recordRepository, FinancialRecordMapper recordMapper, UserService userService, UserMapper userMapper) {
         this.recordRepository = recordRepository;
         this.recordMapper = recordMapper;
         this.userService = userService;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -46,17 +51,26 @@ public class FinancialRecordServiceImpl implements FinancialRecordService {
     }
 
     @Override
-    public List<FinancialRecordResponse> findAllByUserEmail(String email) {
+    public FindAllResponse findAllByUserEmail(String email) {
         List<FinancialRecord> financialRecords = recordRepository.findAllByUserEmail(email);
 
-        return financialRecords.stream()
+        List<FinancialRecordResponse> financialRecordResponses = financialRecords.stream()
                 .map(recordMapper::toRecordResponse)
                 .toList();
+
+        UserResponse userResponse = userMapper.toResponse(userService.findByEmail(email));
+
+        return FindAllResponse.builder()
+                .user(userResponse)
+                .financialRecords(financialRecordResponses)
+                .build();
     }
 
     @Override
     public FinancialSummary getSummary(String email) {
         User user = userService.findByEmail(email);
+
+        UserResponse userResponse = userMapper.toResponse(user);
 
         List<FinancialRecord> financialRecords = recordRepository.findAllByUserEmail(user.getEmail());
 
@@ -73,7 +87,7 @@ public class FinancialRecordServiceImpl implements FinancialRecordService {
         Double balance = totalIncome - totalExpense;
 
         return FinancialSummary.builder()
-                .user(user)
+                .user(userResponse)
                 .totalIncome(totalIncome)
                 .totalExpense(totalExpense)
                 .balance(balance)
