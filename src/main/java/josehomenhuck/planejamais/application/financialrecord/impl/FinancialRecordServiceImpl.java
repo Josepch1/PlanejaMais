@@ -1,14 +1,14 @@
-package josehomenhuck.planejamais.application.financialRecord.impl;
+package josehomenhuck.planejamais.application.financialrecord.impl;
 
-import josehomenhuck.planejamais.application.financialRecord.dto.FinancialRecordRequest;
-import josehomenhuck.planejamais.application.financialRecord.dto.FinancialRecordResponse;
-import josehomenhuck.planejamais.application.financialRecord.dto.FinancialSummary;
-import josehomenhuck.planejamais.application.financialRecord.dto.FindAllResponse;
-import josehomenhuck.planejamais.application.financialRecord.mapper.FinancialRecordMapper;
+import josehomenhuck.planejamais.application.financialrecord.dto.FinancialRecordRequest;
+import josehomenhuck.planejamais.application.financialrecord.dto.FinancialRecordResponse;
+import josehomenhuck.planejamais.application.financialrecord.dto.FinancialSummary;
+import josehomenhuck.planejamais.application.financialrecord.dto.FindAllResponse;
+import josehomenhuck.planejamais.application.financialrecord.mapper.FinancialRecordMapper;
 import josehomenhuck.planejamais.application.user.dto.UserResponse;
 import josehomenhuck.planejamais.application.user.mapper.UserMapper;
-import josehomenhuck.planejamais.domain.financialRecord.entity.FinancialRecord;
-import josehomenhuck.planejamais.domain.financialRecord.service.FinancialRecordService;
+import josehomenhuck.planejamais.domain.financialrecord.entity.FinancialRecord;
+import josehomenhuck.planejamais.domain.financialrecord.service.FinancialRecordService;
 import josehomenhuck.planejamais.domain.user.entity.User;
 import josehomenhuck.planejamais.domain.user.service.UserService;
 import josehomenhuck.planejamais.infrastructure.repository.FinancialRecordRepository;
@@ -75,12 +75,12 @@ public class FinancialRecordServiceImpl implements FinancialRecordService {
         List<FinancialRecord> financialRecords = recordRepository.findAllByUserEmail(user.getEmail());
 
         Double totalIncome = financialRecords.stream()
-                .filter(record -> record.getType().isIncome())
+                .filter(fr -> fr.getType().isIncome())
                 .mapToDouble(FinancialRecord::getValue)
                 .sum();
 
         Double totalExpense = financialRecords.stream()
-                .filter(record -> record.getType().isExpense())
+                .filter(fr -> fr.getType().isExpense())
                 .mapToDouble(FinancialRecord::getValue)
                 .sum();
 

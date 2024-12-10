@@ -1,13 +1,13 @@
-package josehomenhuck.planejamais.domain.financialRecord.service;
+package josehomenhuck.planejamais.domain.financialrecord.service;
 
-import josehomenhuck.planejamais.application.financialRecord.dto.FinancialRecordRequest;
-import josehomenhuck.planejamais.application.financialRecord.dto.FinancialSummary;
-import josehomenhuck.planejamais.application.financialRecord.dto.FindAllResponse;
-import josehomenhuck.planejamais.application.financialRecord.impl.FinancialRecordServiceImpl;
-import josehomenhuck.planejamais.application.financialRecord.mapper.FinancialRecordMapper;
+import josehomenhuck.planejamais.application.financialrecord.dto.FinancialRecordRequest;
+import josehomenhuck.planejamais.application.financialrecord.dto.FinancialSummary;
+import josehomenhuck.planejamais.application.financialrecord.dto.FindAllResponse;
+import josehomenhuck.planejamais.application.financialrecord.impl.FinancialRecordServiceImpl;
+import josehomenhuck.planejamais.application.financialrecord.mapper.FinancialRecordMapper;
 import josehomenhuck.planejamais.application.user.mapper.UserMapper;
-import josehomenhuck.planejamais.domain.financialRecord.entity.FinancialRecord;
-import josehomenhuck.planejamais.domain.financialRecord.enums.FinancialRecordType;
+import josehomenhuck.planejamais.domain.financialrecord.entity.FinancialRecord;
+import josehomenhuck.planejamais.domain.financialrecord.enums.FinancialRecordType;
 import josehomenhuck.planejamais.domain.user.entity.User;
 import josehomenhuck.planejamais.domain.user.service.UserService;
 import josehomenhuck.planejamais.infrastructure.repository.FinancialRecordRepository;

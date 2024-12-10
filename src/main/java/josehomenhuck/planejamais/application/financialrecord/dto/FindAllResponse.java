@@ -1,4 +1,4 @@
-package josehomenhuck.planejamais.application.financialRecord.dto;
+package josehomenhuck.planejamais.application.financialrecord.dto;
 
 import josehomenhuck.planejamais.application.user.dto.UserResponse;
 import lombok.Builder;

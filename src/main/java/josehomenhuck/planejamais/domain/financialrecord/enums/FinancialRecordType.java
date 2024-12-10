@@ -1,4 +1,4 @@
-package josehomenhuck.planejamais.domain.financialRecord.enums;
+package josehomenhuck.planejamais.domain.financialrecord.enums;
 
 import lombok.Getter;
 

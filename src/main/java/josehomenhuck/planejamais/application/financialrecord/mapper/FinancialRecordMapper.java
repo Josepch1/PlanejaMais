@@ -1,9 +1,9 @@
-package josehomenhuck.planejamais.application.financialRecord.mapper;
+package josehomenhuck.planejamais.application.financialrecord.mapper;
 
-import josehomenhuck.planejamais.application.financialRecord.dto.FinancialRecordRequest;
-import josehomenhuck.planejamais.application.financialRecord.dto.FinancialRecordResponse;
+import josehomenhuck.planejamais.application.financialrecord.dto.FinancialRecordRequest;
+import josehomenhuck.planejamais.application.financialrecord.dto.FinancialRecordResponse;
 import josehomenhuck.planejamais.application.user.dto.UserResponse;
-import josehomenhuck.planejamais.domain.financialRecord.entity.FinancialRecord;
+import josehomenhuck.planejamais.domain.financialrecord.entity.FinancialRecord;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;

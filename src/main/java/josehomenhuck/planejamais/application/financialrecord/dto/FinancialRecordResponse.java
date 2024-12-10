@@ -1,7 +1,7 @@
-package josehomenhuck.planejamais.application.financialRecord.dto;
+package josehomenhuck.planejamais.application.financialrecord.dto;
 
 import josehomenhuck.planejamais.application.user.dto.UserResponse;
-import josehomenhuck.planejamais.domain.financialRecord.enums.FinancialRecordType;
+import josehomenhuck.planejamais.domain.financialrecord.enums.FinancialRecordType;
 import lombok.*;
 
 import java.time.LocalDateTime;
