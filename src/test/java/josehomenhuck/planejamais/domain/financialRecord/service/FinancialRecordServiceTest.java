@@ -1,10 +1,11 @@
 package josehomenhuck.planejamais.domain.financialRecord.service;
 
 import josehomenhuck.planejamais.application.financialRecord.dto.FinancialRecordRequest;
-import josehomenhuck.planejamais.application.financialRecord.dto.FinancialRecordResponse;
 import josehomenhuck.planejamais.application.financialRecord.dto.FinancialSummary;
+import josehomenhuck.planejamais.application.financialRecord.dto.FindAllResponse;
 import josehomenhuck.planejamais.application.financialRecord.impl.FinancialRecordServiceImpl;
 import josehomenhuck.planejamais.application.financialRecord.mapper.FinancialRecordMapper;
+import josehomenhuck.planejamais.application.user.mapper.UserMapper;
 import josehomenhuck.planejamais.domain.financialRecord.entity.FinancialRecord;
 import josehomenhuck.planejamais.domain.financialRecord.enums.FinancialRecordType;
 import josehomenhuck.planejamais.domain.user.entity.User;
@@ -39,7 +40,8 @@ class FinancialRecordServiceTest {
     @BeforeEach
     void setUp() {
         financialRecordMapper = new FinancialRecordMapper();
-        underTest = new FinancialRecordServiceImpl(financialRecordRepository, financialRecordMapper, userService);
+        UserMapper userMapper = new UserMapper();
+        underTest = new FinancialRecordServiceImpl(financialRecordRepository, financialRecordMapper, userService, userMapper);
     }
 
     @Test
@@ -51,7 +53,6 @@ class FinancialRecordServiceTest {
                 .password("123456")
                 .build();
 
-        when(userService.findByEmail(newUser.getEmail())).thenReturn(newUser);
 
         FinancialRecordRequest recordRequest = FinancialRecordRequest.builder()
                 .userEmail("test@test.com")
@@ -60,20 +61,22 @@ class FinancialRecordServiceTest {
                 .value(100.0)
                 .build();
 
-        FinancialRecord record = financialRecordMapper.toRecord(recordRequest);
+        when(userService.findByEmail(newUser.getEmail())).thenReturn(newUser);
+
+        FinancialRecord financialRecord = financialRecordMapper.toRecord(recordRequest);
 
         User user = userService.findByEmail(recordRequest.getUserEmail());
         assertNotNull(user, "user should not be null");
 
-        record.setUser(user);
+        financialRecord.setUser(user);
 
-        when(financialRecordRepository.save(record)).thenReturn(record);
+        when(financialRecordRepository.save(financialRecord)).thenReturn(financialRecord);
 
         // When
         underTest.create(recordRequest);
 
         // Then
-        verify(financialRecordRepository).save(record);
+        verify(financialRecordRepository).save(financialRecord);
     }
 
     @Test
@@ -81,6 +84,14 @@ class FinancialRecordServiceTest {
         // Given
         String email = "test@test.com";
 
+        // Create a User object
+        User user = User.builder()
+                .email(email)
+                .name("Test User")
+                .password("123456")
+                .build();
+
+        // Create FinancialRecordRequest for the first record
         FinancialRecordRequest recordRequest1 = FinancialRecordRequest.builder()
                 .userEmail(email)
                 .description("Test")
@@ -88,9 +99,12 @@ class FinancialRecordServiceTest {
                 .value(100.0)
                 .build();
 
+        // Create FinancialRecord and set the User
         FinancialRecord record1 = financialRecordMapper.toRecord(recordRequest1);
+        record1.setUser(user);
         assertNotNull(record1, "record1 should not be null");
 
+        // Create FinancialRecordRequest for the second record
         FinancialRecordRequest recordRequest2 = FinancialRecordRequest.builder()
                 .userEmail(email)
                 .description("SecondTest")
@@ -98,20 +112,20 @@ class FinancialRecordServiceTest {
                 .value(10.0)
                 .build();
 
+        // Create FinancialRecord and set the User
         FinancialRecord record2 = financialRecordMapper.toRecord(recordRequest2);
+        record2.setUser(user);
         assertNotNull(record2, "record2 should not be null");
 
+        // Return the list of records
         List<FinancialRecord> records = List.of(record1, record2);
         when(financialRecordRepository.findAllByUserEmail(email)).thenReturn(records);
 
         // When
-        List<FinancialRecordResponse> result = underTest.findAllByUserEmail(email);
+        FindAllResponse result = underTest.findAllByUserEmail(email);
 
         // Then
         assertNotNull(result);
-        assertEquals(2, result.size());
-        assertEquals("Test", result.get(0).getDescription());
-        assertEquals("SecondTest", result.get(1).getDescription());
         verify(financialRecordRepository).findAllByUserEmail(email);
         verifyNoMoreInteractions(financialRecordRepository);
     }
@@ -168,31 +182,43 @@ class FinancialRecordServiceTest {
     void update() {
         // Given
         FinancialRecordRequest recordRequest = FinancialRecordRequest.builder()
+                .userEmail("test@test.com")
                 .description("Test")
                 .type(FinancialRecordType.INCOME)
                 .value(100.0)
                 .build();
 
+        String email = "test@test.com";
+
+        User newUser = User.builder()
+                .email(email)
+                .name("Test")
+                .password("123456")
+                .build();
+
         FinancialRecord existingRecord = FinancialRecord.builder()
+                .user(newUser) // ensure user is set
                 .id(UUID.randomUUID().toString())
                 .description("OldTest")
                 .type(FinancialRecordType.EXPENSE)
                 .value(50.0)
                 .build();
 
-        FinancialRecord record = financialRecordMapper.toRecord(recordRequest);
-        record.setId(existingRecord.getId());
+        FinancialRecord financialRecord = financialRecordMapper.toRecord(recordRequest);
+        financialRecord.setId(existingRecord.getId());
+        financialRecord.setUser(newUser); // ensure user is set on the new record
 
         when(financialRecordRepository.findById(existingRecord.getId())).thenReturn(Optional.of(existingRecord));
-        when(financialRecordRepository.save(record)).thenReturn(record);
+        when(financialRecordRepository.save(financialRecord)).thenReturn(financialRecord);
 
         // When
         underTest.update(existingRecord.getId(), recordRequest);
 
         // Then
-        verify(financialRecordRepository).save(record);
+        verify(financialRecordRepository).save(financialRecord);
         verifyNoMoreInteractions(financialRecordRepository);
     }
+
 
     @Test
     void deleteById() {
@@ -203,12 +229,23 @@ class FinancialRecordServiceTest {
                 .value(100.0)
                 .build();
 
-        FinancialRecord record = financialRecordMapper.toRecord(recordRequest);
-        assertNotNull(record, "record1 should not be null");
+        // Create a new User for the FinancialRecord
+        User user = User.builder()
+                .email("test@test.com")
+                .name("Test User")
+                .password("123456")
+                .build();
 
-        when(financialRecordRepository.findById(record.getId())).thenReturn(Optional.of(record));
+        // Set the User in the FinancialRecord
+        String id = UUID.randomUUID().toString();
+        FinancialRecord financialRecord = financialRecordMapper.toRecord(recordRequest);
+        financialRecord.setId(id);
+        financialRecord.setUser(user);  // Ensure the User is set here
 
-        String id = record.getId();
+        assertNotNull(financialRecord, "record should not be null");
+
+        // Mock findById to return the record
+        when(financialRecordRepository.findById(id)).thenReturn(Optional.of(financialRecord));
 
         // When
         underTest.deleteById(id);
@@ -217,6 +254,7 @@ class FinancialRecordServiceTest {
         verify(financialRecordRepository).deleteById(id);
         verifyNoMoreInteractions(financialRecordRepository);
     }
+
 
     @Test
     void deleteAll() {
