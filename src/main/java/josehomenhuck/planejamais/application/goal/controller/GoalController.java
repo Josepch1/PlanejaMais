@@ -1,6 +1,5 @@
 package josehomenhuck.planejamais.application.goal.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.websocket.server.PathParam;
 import josehomenhuck.planejamais.application.goal.dto.GoalFindAllResponse;
 import josehomenhuck.planejamais.application.goal.dto.GoalFundsRequest;
@@ -8,8 +7,6 @@ import josehomenhuck.planejamais.application.goal.dto.GoalRequest;
 import josehomenhuck.planejamais.application.goal.dto.GoalResponse;
 import josehomenhuck.planejamais.domain.goal.service.GoalService;
 
-import josehomenhuck.planejamais.domain.user.entity.User;
-import josehomenhuck.planejamais.domain.user.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,11 +19,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Goal")
 public class GoalController {
     private final GoalService goalService;
-    private final UserService userService;
 
-    public GoalController(GoalService goalService, UserService userService) {
+    public GoalController(GoalService goalService) {
         this.goalService = goalService;
-        this.userService = userService;
     }
 
     @Operation(summary = "Find all goals by user email", security = @SecurityRequirement(name = "bearerAuth"))
