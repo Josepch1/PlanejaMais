@@ -43,4 +43,15 @@ public class GoalMapper {
                 .targetValue(goalRequest.getTargetValue())
                 .build();
     }
+
+    public GoalResponse toResponse(Goal goal) {
+        return GoalResponse.builder()
+                .id(goal.getId())
+                .name(goal.getName())
+                .description(goal.getDescription())
+                .actualValue(goal.getActualValue())
+                .targetValue(goal.getTargetValue())
+                .date(goal.getCreatedAt())
+                .build();
+    }
 }
