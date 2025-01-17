@@ -27,9 +27,11 @@ public class GoalMapper {
 
         return GoalResponse.builder()
                 .id(goal.getId())
+                .name(goal.getName())
                 .user(userResponse)
                 .description(goal.getDescription())
-                .value(goal.getValue())
+                .actualValue(goal.getActualValue())
+                .targetValue(goal.getTargetValue())
                 .date(date)
                 .build();
     }
@@ -38,7 +40,7 @@ public class GoalMapper {
         return Goal.builder()
                 .name(goalRequest.getName())
                 .description(goalRequest.getDescription())
-                .value(goalRequest.getValue())
+                .targetValue(goalRequest.getTargetValue())
                 .build();
     }
 }

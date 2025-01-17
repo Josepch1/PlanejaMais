@@ -33,7 +33,10 @@ public class Goal {
     private String description;
 
     @Column
-    private Double value;
+    private Double actualValue;
+
+    @Column
+    private Double targetValue;
 
     @Column
     @CreatedDate

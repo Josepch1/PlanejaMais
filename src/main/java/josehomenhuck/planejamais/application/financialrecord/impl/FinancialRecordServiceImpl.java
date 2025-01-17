@@ -5,10 +5,13 @@ import josehomenhuck.planejamais.application.financialrecord.dto.FinancialRecord
 import josehomenhuck.planejamais.application.financialrecord.dto.FinancialSummary;
 import josehomenhuck.planejamais.application.financialrecord.dto.FinancialFindAllResponse;
 import josehomenhuck.planejamais.application.financialrecord.mapper.FinancialRecordMapper;
+import josehomenhuck.planejamais.application.goal.dto.GoalFindAllResponse;
+import josehomenhuck.planejamais.application.goal.dto.GoalResponse;
 import josehomenhuck.planejamais.application.user.dto.UserResponse;
 import josehomenhuck.planejamais.application.user.mapper.UserMapper;
 import josehomenhuck.planejamais.domain.financialrecord.entity.FinancialRecord;
 import josehomenhuck.planejamais.domain.financialrecord.service.FinancialRecordService;
+import josehomenhuck.planejamais.domain.goal.service.GoalService;
 import josehomenhuck.planejamais.domain.user.entity.User;
 import josehomenhuck.planejamais.domain.user.service.UserService;
 import josehomenhuck.planejamais.infrastructure.repository.FinancialRecordRepository;
@@ -24,12 +27,20 @@ public class FinancialRecordServiceImpl implements FinancialRecordService {
     private final FinancialRecordMapper recordMapper;
     private final UserService userService;
     private final UserMapper userMapper;
+    private final GoalService goalService;
 
-    public FinancialRecordServiceImpl(FinancialRecordRepository recordRepository, FinancialRecordMapper recordMapper, UserService userService, UserMapper userMapper) {
+    public FinancialRecordServiceImpl(
+            FinancialRecordRepository recordRepository,
+            FinancialRecordMapper recordMapper,
+            UserService userService,
+            UserMapper userMapper,
+            GoalService goalService
+    ) {
         this.recordRepository = recordRepository;
         this.recordMapper = recordMapper;
         this.userService = userService;
         this.userMapper = userMapper;
+        this.goalService = goalService;
     }
 
     @Override
@@ -72,25 +83,20 @@ public class FinancialRecordServiceImpl implements FinancialRecordService {
 
         UserResponse userResponse = userMapper.toResponse(user);
 
-        List<FinancialRecord> financialRecords = recordRepository.findAllByUserEmail(user.getEmail());
-
-        Double totalIncome = financialRecords.stream()
-                .filter(fr -> fr.getType().isIncome())
-                .mapToDouble(FinancialRecord::getValue)
-                .sum();
-
-        Double totalExpense = financialRecords.stream()
-                .filter(fr -> fr.getType().isExpense())
-                .mapToDouble(FinancialRecord::getValue)
-                .sum();
+        Double totalIncome = getTotalIncome(email);
+        Double totalExpense = getTotalExpense(email);
 
         Double balance = totalIncome - totalExpense;
+
+        GoalFindAllResponse getAllGoalsByEmail = goalService.findAllByUserEmail(email);
+        List<GoalResponse> goals = getAllGoalsByEmail.getGoals();
 
         return FinancialSummary.builder()
                 .user(userResponse)
                 .totalIncome(totalIncome)
                 .totalExpense(totalExpense)
                 .balance(balance)
+                .goals(goals)
                 .build();
     }
 
@@ -117,5 +123,29 @@ public class FinancialRecordServiceImpl implements FinancialRecordService {
         recordRepository.deleteById(id);
 
         return recordMapper.toRecordResponse(financialRecord);
+    }
+
+    @Override
+    public Double getTotalIncome(String email) {
+        User user = userService.findByEmail(email);
+
+        List<FinancialRecord> financialRecords = recordRepository.findAllByUserEmail(user.getEmail());
+
+        return financialRecords.stream()
+                .filter(fr -> fr.getType().isIncome())
+                .mapToDouble(FinancialRecord::getValue)
+                .sum();
+    }
+
+    @Override
+    public Double getTotalExpense(String email) {
+        User user = userService.findByEmail(email);
+
+        List<FinancialRecord> financialRecords = recordRepository.findAllByUserEmail(user.getEmail());
+
+        return financialRecords.stream()
+                .filter(fr -> fr.getType().isExpense())
+                .mapToDouble(FinancialRecord::getValue)
+                .sum();
     }
 }

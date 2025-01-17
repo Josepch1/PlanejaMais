@@ -7,10 +7,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GoalRequest {
+public class GoalFundsRequest {
     private String email;
-    private String name;
-    private String description;
-    private Double targetValue;
-
+    private Double value;
 }

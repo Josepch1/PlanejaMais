@@ -1,11 +1,13 @@
 package josehomenhuck.planejamais.application.goal.impl;
 
 import josehomenhuck.planejamais.application.goal.dto.GoalFindAllResponse;
+import josehomenhuck.planejamais.application.goal.dto.GoalFundsRequest;
 import josehomenhuck.planejamais.application.goal.dto.GoalRequest;
 import josehomenhuck.planejamais.application.goal.dto.GoalResponse;
 import josehomenhuck.planejamais.application.goal.mapper.GoalMapper;
 import josehomenhuck.planejamais.application.user.dto.UserResponse;
 import josehomenhuck.planejamais.application.user.mapper.UserMapper;
+import josehomenhuck.planejamais.domain.financialrecord.service.FinancialRecordService;
 import josehomenhuck.planejamais.domain.goal.entity.Goal;
 import josehomenhuck.planejamais.domain.goal.service.GoalService;
 import josehomenhuck.planejamais.domain.user.entity.User;
@@ -25,12 +27,18 @@ public class GoalServiceImpl implements GoalService {
     private final GoalMapper goalMapper;
     private final UserService userService;
     private final UserMapper userMapper;
+    private final FinancialRecordService financialRecordService;
 
-    public GoalServiceImpl(GoalRepository goalRepository, GoalMapper goalMapper, UserService userService, UserMapper userMapper) {
+    public GoalServiceImpl(GoalRepository goalRepository,
+                           GoalMapper goalMapper,
+                           UserService userService,
+                           UserMapper userMapper,
+                           FinancialRecordService financialRecordService) {
         this.goalRepository = goalRepository;
         this.goalMapper = goalMapper;
         this.userService = userService;
-        this.userMapper = userMapper;    
+        this.userMapper = userMapper;
+        this.financialRecordService = financialRecordService;
     }
 
     @Override
@@ -73,9 +81,17 @@ public class GoalServiceImpl implements GoalService {
         Goal goal = goalRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Record not found"));
 
+        User user = userService.findByEmail(goalRequest.getEmail());
+
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        } else if (!goal.getUser().getEmail().equalsIgnoreCase(goalRequest.getEmail())) {
+            throw new IllegalArgumentException("User not allowed to update this record");
+        }
+
         goal.setName(goalRequest.getName());
         goal.setDescription(goalRequest.getDescription());
-        goal.setValue(goalRequest.getValue());
+        goal.setTargetValue(goalRequest.getTargetValue());
 
         Goal updatedGoal = goalRepository.save(goal);
 
@@ -83,12 +99,60 @@ public class GoalServiceImpl implements GoalService {
     }
 
     @Override
-    public GoalResponse deleteById(Long id) {
+    public GoalResponse deleteById(Long id, String email) {
         Goal goal = goalRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Record not found"));
+
+        if (!goal.getUser().getEmail().equalsIgnoreCase(email)) {
+            throw new IllegalArgumentException("User not allowed to delete this record");
+        }
 
         goalRepository.deleteById(id);
 
         return goalMapper.toRecordResponse(goal);
+    }
+
+    @Override
+    public GoalResponse addFunds(Long id, GoalFundsRequest goalRequest) {
+        Goal goal = goalRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Record not found"));
+
+        String email = goalRequest.getEmail();
+        Double value = goalRequest.getValue();
+
+        if (!goal.getUser().getEmail().equalsIgnoreCase(email)) {
+            throw new IllegalArgumentException("User not allowed to update this record");
+        }
+
+        double balance = financialRecordService.getTotalIncome(email) - financialRecordService.getTotalExpense(email);
+
+        if (balance < value) {
+            throw new IllegalArgumentException("Insufficient funds");
+        }
+
+        goal.setActualValue(goal.getActualValue() + value);
+
+        return goalMapper.toRecordResponse(goalRepository.save(goal));
+    }
+
+    @Override
+    public GoalResponse removeFunds(Long id, GoalFundsRequest goalRequest) {
+        Goal goal = goalRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Record not found"));
+
+        String email = goalRequest.getEmail();
+        Double value = goalRequest.getValue();
+
+        if (!goal.getUser().getEmail().equalsIgnoreCase(email)) {
+            throw new IllegalArgumentException("User not allowed to update this record");
+        }
+
+        if (goal.getActualValue() < value) {
+            throw new IllegalArgumentException("Insufficient funds");
+        }
+
+        goal.setActualValue(goal.getActualValue() - value);
+
+        return goalMapper.toRecordResponse(goalRepository.save(goal));
     }
 }

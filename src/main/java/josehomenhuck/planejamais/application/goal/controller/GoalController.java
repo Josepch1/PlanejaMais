@@ -1,11 +1,15 @@
 package josehomenhuck.planejamais.application.goal.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.websocket.server.PathParam;
 import josehomenhuck.planejamais.application.goal.dto.GoalFindAllResponse;
+import josehomenhuck.planejamais.application.goal.dto.GoalFundsRequest;
 import josehomenhuck.planejamais.application.goal.dto.GoalRequest;
 import josehomenhuck.planejamais.application.goal.dto.GoalResponse;
 import josehomenhuck.planejamais.domain.goal.service.GoalService;
 
+import josehomenhuck.planejamais.domain.user.entity.User;
+import josehomenhuck.planejamais.domain.user.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,9 +22,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Goal")
 public class GoalController {
     private final GoalService goalService;
+    private final UserService userService;
 
-    public GoalController(GoalService goalService) {
+    public GoalController(GoalService goalService, UserService userService) {
         this.goalService = goalService;
+        this.userService = userService;
     }
 
     @Operation(summary = "Find all goals by user email", security = @SecurityRequirement(name = "bearerAuth"))
@@ -33,6 +39,8 @@ public class GoalController {
     @Operation(summary = "Create a goal", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping
     public ResponseEntity<GoalResponse> create(@RequestBody GoalRequest goalRequest) {
+
+
         return ResponseEntity.ok(goalService.create(goalRequest));
     }
 
@@ -43,8 +51,20 @@ public class GoalController {
     }
 
     @Operation(summary = "Delete a goal by id", security = @SecurityRequirement(name = "bearerAuth"))
-    @DeleteMapping("/{id}")
-    public ResponseEntity<GoalResponse> deleteById(@PathVariable Long id) {
-        return ResponseEntity.ok(goalService.deleteById(id));
+    @DeleteMapping("/{email}/{id}")
+    public ResponseEntity<GoalResponse> deleteById(@PathVariable Long id, @PathVariable String email) {
+        return ResponseEntity.ok(goalService.deleteById(id, email));
+    }
+
+    @Operation(summary = "Add funds to a goal", security = @SecurityRequirement(name = "bearerAuth"))
+    @PutMapping("/add/{id}")
+    public ResponseEntity<GoalResponse> addFunds(@PathVariable Long id, @RequestBody GoalFundsRequest goalRequest) {
+        return ResponseEntity.ok(goalService.addFunds(id, goalRequest));
+    }
+
+    @Operation(summary = "Remove funds from a goal", security = @SecurityRequirement(name = "bearerAuth"))
+    @PutMapping("/remove/{id}")
+    public ResponseEntity<GoalResponse> removeFunds(@PathVariable Long id, @RequestBody GoalFundsRequest goalRequest) {
+        return ResponseEntity.ok(goalService.removeFunds(id, goalRequest));
     }
 }

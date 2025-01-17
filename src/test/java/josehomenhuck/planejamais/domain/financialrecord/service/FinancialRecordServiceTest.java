@@ -8,6 +8,7 @@ import josehomenhuck.planejamais.application.financialrecord.mapper.FinancialRec
 import josehomenhuck.planejamais.application.user.mapper.UserMapper;
 import josehomenhuck.planejamais.domain.financialrecord.entity.FinancialRecord;
 import josehomenhuck.planejamais.domain.financialrecord.enums.FinancialRecordType;
+import josehomenhuck.planejamais.domain.goal.service.GoalService;
 import josehomenhuck.planejamais.domain.user.entity.User;
 import josehomenhuck.planejamais.domain.user.service.UserService;
 import josehomenhuck.planejamais.infrastructure.repository.FinancialRecordRepository;
@@ -35,13 +36,16 @@ class FinancialRecordServiceTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private GoalService goalService;
+
     private FinancialRecordServiceImpl underTest;
 
     @BeforeEach
     void setUp() {
         financialRecordMapper = new FinancialRecordMapper();
         UserMapper userMapper = new UserMapper();
-        underTest = new FinancialRecordServiceImpl(financialRecordRepository, financialRecordMapper, userService, userMapper);
+        underTest = new FinancialRecordServiceImpl(financialRecordRepository, financialRecordMapper, userService, userMapper, goalService);
     }
 
     @Test

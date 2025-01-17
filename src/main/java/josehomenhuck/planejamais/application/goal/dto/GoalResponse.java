@@ -15,17 +15,7 @@ public class GoalResponse {
     private UserResponse user;
     private String name;
     private String description;
-    private Double value;
+    private Double actualValue;
+    private Double targetValue;
     private LocalDateTime date;
 }
-
-
-/*
-/goal
-
-POST ("Register a goal for the user")
-
-PUT ("Update the goal of the user")
-
-DELETE ("Delete the goal of the user")
- */

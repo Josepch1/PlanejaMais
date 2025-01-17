@@ -15,4 +15,8 @@ public interface FinancialRecordService {
     FinancialRecordResponse update(String id, FinancialRecordRequest recordRequest);
 
     FinancialRecordResponse deleteById(String id);
+
+    Double getTotalIncome(String email);
+
+    Double getTotalExpense(String email);
 }
