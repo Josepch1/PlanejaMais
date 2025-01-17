@@ -13,9 +13,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 
 @RestController
 @RequestMapping("/v1/users")
+@Tag(name = "User")
 public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
@@ -25,6 +29,7 @@ public class UserController {
         this.userMapper = userMapper;
     }
 
+    @Operation(summary = "Create a new user")
     @PostMapping
     public ResponseEntity<Void> save(@RequestBody UserRequest request) {
         try {
@@ -36,6 +41,7 @@ public class UserController {
         }
     }
 
+    @Operation(summary = "Authenticate a user", security = {})
     @PostMapping("/auth")
     public ResponseEntity<AccessToken> authenticate(@RequestBody CredentialsRequest request) {
         AccessToken token = userService.authenticate(request.getEmail(), request.getPassword());
