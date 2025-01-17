@@ -38,20 +38,13 @@ public class GoalController {
 
     @Operation(summary = "Update a goal", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping("/{id}")
-    public ResponseEntity<GoalResponse> update(@PathVariable String id, @RequestBody GoalRequest goalRequest) {
+    public ResponseEntity<GoalResponse> update(@PathVariable Long id, @RequestBody GoalRequest goalRequest) {
         return ResponseEntity.ok(goalService.update(id, goalRequest));
-    }
-
-    @Operation(summary = "Delete all goals", security = @SecurityRequirement(name = "bearerAuth"))
-    @DeleteMapping
-    public ResponseEntity<Void> deleteAll() {
-        goalService.deleteAll();
-        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Delete a goal by id", security = @SecurityRequirement(name = "bearerAuth"))
     @DeleteMapping("/{id}")
-    public ResponseEntity<GoalResponse> deleteById(@PathVariable String id) {
+    public ResponseEntity<GoalResponse> deleteById(@PathVariable Long id) {
         return ResponseEntity.ok(goalService.deleteById(id));
     }
 }

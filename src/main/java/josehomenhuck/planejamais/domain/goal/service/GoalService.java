@@ -9,9 +9,7 @@ public interface GoalService {
 
     GoalFindAllResponse findAllByUserEmail(String email);
 
-    GoalResponse update(String id, GoalRequest goalRequest);
+    GoalResponse update(Long id, GoalRequest goalRequest);
 
-    GoalResponse deleteById(String id);
-
-    void deleteAll();
+    GoalResponse deleteById(Long id);
 }

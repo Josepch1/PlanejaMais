@@ -11,10 +11,21 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GoalResponse {
-    private String id;
+    private Long id;
     private UserResponse user;
     private String name;
     private String description;
     private Double value;
     private LocalDateTime date;
 }
+
+
+/*
+/goal
+
+POST ("Register a goal for the user")
+
+PUT ("Update the goal of the user")
+
+DELETE ("Delete the goal of the user")
+ */

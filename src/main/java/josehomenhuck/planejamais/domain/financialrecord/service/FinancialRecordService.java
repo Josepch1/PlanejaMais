@@ -15,6 +15,4 @@ public interface FinancialRecordService {
     FinancialRecordResponse update(String id, FinancialRecordRequest recordRequest);
 
     FinancialRecordResponse deleteById(String id);
-
-    void deleteAll();
 }

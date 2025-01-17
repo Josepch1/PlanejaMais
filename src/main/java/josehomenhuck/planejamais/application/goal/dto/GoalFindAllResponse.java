@@ -10,5 +10,5 @@ import java.util.List;
 @Builder
 public class GoalFindAllResponse {
     private UserResponse user;
-    private List<GoalResponse> financialRecords;
+    private List<GoalResponse> goals;
 }

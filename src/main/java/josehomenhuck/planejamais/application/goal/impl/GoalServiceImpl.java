@@ -36,7 +36,7 @@ public class GoalServiceImpl implements GoalService {
     @Override
     @Transactional
     public GoalResponse create(GoalRequest goalRequest) {
-        User user = userService.findByEmail(goalRequest.getUserEmail());
+        User user = userService.findByEmail(goalRequest.getEmail());
 
         if (user == null) {
             throw new IllegalArgumentException("User not found");
@@ -63,13 +63,13 @@ public class GoalServiceImpl implements GoalService {
 
         return GoalFindAllResponse.builder()
                 .user(userResponse)
-                .financialRecords(financialRecordResponses)
+                .goals(financialRecordResponses)
                 .build();
     }
 
     @Override
     @Transactional
-    public GoalResponse update(String id, GoalRequest goalRequest) {
+    public GoalResponse update(Long id, GoalRequest goalRequest) {
         Goal goal = goalRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Record not found"));
 
@@ -83,17 +83,12 @@ public class GoalServiceImpl implements GoalService {
     }
 
     @Override
-    public GoalResponse deleteById(String id) {
+    public GoalResponse deleteById(Long id) {
         Goal goal = goalRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Record not found"));
 
         goalRepository.deleteById(id);
 
         return goalMapper.toRecordResponse(goal);
-    }
-
-    @Override
-    public void deleteAll() {
-        goalRepository.deleteAll();
     }
 }

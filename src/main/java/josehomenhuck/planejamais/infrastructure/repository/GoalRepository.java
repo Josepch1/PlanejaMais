@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface GoalRepository extends JpaRepository<Goal, String> {
+public interface GoalRepository extends JpaRepository<Goal, Long> {
     List<Goal> findAllByUserEmail(String email);
 }

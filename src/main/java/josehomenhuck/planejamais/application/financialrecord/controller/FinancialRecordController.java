@@ -48,13 +48,6 @@ public class FinancialRecordController {
         return ResponseEntity.ok(financialRecordService.update(id, financialRecordRequest));
     }
 
-    @Operation(summary = "Delete all financial records", security = @SecurityRequirement(name = "bearerAuth"))
-    @DeleteMapping
-    public ResponseEntity<Void> deleteAll() {
-        financialRecordService.deleteAll();
-        return ResponseEntity.noContent().build();
-    }
-
     @Operation(summary = "Delete a financial record by id", security = @SecurityRequirement(name = "bearerAuth"))
     @DeleteMapping("/{id}")
     public ResponseEntity<FinancialRecordResponse> deleteById(@PathVariable String id) {

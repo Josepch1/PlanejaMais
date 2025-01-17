@@ -118,9 +118,4 @@ public class FinancialRecordServiceImpl implements FinancialRecordService {
 
         return recordMapper.toRecordResponse(financialRecord);
     }
-
-    @Override
-    public void deleteAll() {
-        recordRepository.deleteAll();
-    }
 }

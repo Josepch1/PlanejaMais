@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GoalRequest {
-    private String userEmail;
+    private String email;
     private String name;
     private String description;
     private Double value;

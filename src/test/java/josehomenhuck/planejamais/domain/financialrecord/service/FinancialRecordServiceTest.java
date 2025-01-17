@@ -254,15 +254,4 @@ class FinancialRecordServiceTest {
         verify(financialRecordRepository).deleteById(id);
         verifyNoMoreInteractions(financialRecordRepository);
     }
-
-
-    @Test
-    void deleteAll() {
-        // When
-        underTest.deleteAll();
-
-        // Then
-        verify(financialRecordRepository).deleteAll();
-        verifyNoMoreInteractions(financialRecordRepository);
-    }
 }

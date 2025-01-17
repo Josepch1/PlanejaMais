@@ -19,8 +19,8 @@ import java.time.LocalDateTime;
 @Builder
 public class Goal {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
