@@ -3,7 +3,7 @@ package josehomenhuck.planejamais.application.financialrecord.impl;
 import josehomenhuck.planejamais.application.financialrecord.dto.FinancialRecordRequest;
 import josehomenhuck.planejamais.application.financialrecord.dto.FinancialRecordResponse;
 import josehomenhuck.planejamais.application.financialrecord.dto.FinancialSummary;
-import josehomenhuck.planejamais.application.financialrecord.dto.FindAllResponse;
+import josehomenhuck.planejamais.application.financialrecord.dto.FinancialFindAllResponse;
 import josehomenhuck.planejamais.application.financialrecord.mapper.FinancialRecordMapper;
 import josehomenhuck.planejamais.application.user.dto.UserResponse;
 import josehomenhuck.planejamais.application.user.mapper.UserMapper;
@@ -51,7 +51,7 @@ public class FinancialRecordServiceImpl implements FinancialRecordService {
     }
 
     @Override
-    public FindAllResponse findAllByUserEmail(String email) {
+    public FinancialFindAllResponse findAllByUserEmail(String email) {
         List<FinancialRecord> financialRecords = recordRepository.findAllByUserEmail(email);
 
         List<FinancialRecordResponse> financialRecordResponses = financialRecords.stream()
@@ -60,7 +60,7 @@ public class FinancialRecordServiceImpl implements FinancialRecordService {
 
         UserResponse userResponse = userMapper.toResponse(userService.findByEmail(email));
 
-        return FindAllResponse.builder()
+        return FinancialFindAllResponse.builder()
                 .user(userResponse)
                 .financialRecords(financialRecordResponses)
                 .build();

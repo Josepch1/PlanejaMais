@@ -1,10 +1,10 @@
 package josehomenhuck.planejamais.application.financialrecord.controller;
 
 import jakarta.websocket.server.PathParam;
+import josehomenhuck.planejamais.application.financialrecord.dto.FinancialFindAllResponse;
 import josehomenhuck.planejamais.application.financialrecord.dto.FinancialRecordRequest;
 import josehomenhuck.planejamais.application.financialrecord.dto.FinancialRecordResponse;
 import josehomenhuck.planejamais.application.financialrecord.dto.FinancialSummary;
-import josehomenhuck.planejamais.application.financialrecord.dto.FindAllResponse;
 import josehomenhuck.planejamais.domain.financialrecord.service.FinancialRecordService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +25,7 @@ public class FinancialRecordController {
 
     @Operation(summary = "Find all financial records by user email", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping
-    public ResponseEntity<FindAllResponse> findAllByUserEmail(@PathParam("email") String email) {
+    public ResponseEntity<FinancialFindAllResponse> findAllByUserEmail(@PathParam("email") String email) {
         return ResponseEntity.ok(financialRecordService.findAllByUserEmail(email));
     }
 

@@ -3,12 +3,12 @@ package josehomenhuck.planejamais.domain.financialrecord.service;
 import josehomenhuck.planejamais.application.financialrecord.dto.FinancialRecordRequest;
 import josehomenhuck.planejamais.application.financialrecord.dto.FinancialRecordResponse;
 import josehomenhuck.planejamais.application.financialrecord.dto.FinancialSummary;
-import josehomenhuck.planejamais.application.financialrecord.dto.FindAllResponse;
+import josehomenhuck.planejamais.application.financialrecord.dto.FinancialFindAllResponse;
 
 public interface FinancialRecordService {
     FinancialRecordResponse create(FinancialRecordRequest recordRequest);
 
-    FindAllResponse findAllByUserEmail(String email);
+    FinancialFindAllResponse findAllByUserEmail(String email);
 
     FinancialSummary getSummary(String email);
 

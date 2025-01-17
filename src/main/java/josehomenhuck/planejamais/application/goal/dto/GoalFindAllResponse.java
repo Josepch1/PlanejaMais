@@ -1,4 +1,4 @@
-package josehomenhuck.planejamais.application.financialrecord.dto;
+package josehomenhuck.planejamais.application.goal.dto;
 
 import josehomenhuck.planejamais.application.user.dto.UserResponse;
 import lombok.Builder;
@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class FindAllResponse {
+public class GoalFindAllResponse {
     private UserResponse user;
-    private List<FinancialRecordResponse> financialRecords;
+    private List<GoalResponse> financialRecords;
 }
