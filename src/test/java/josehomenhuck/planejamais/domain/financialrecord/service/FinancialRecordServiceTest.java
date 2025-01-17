@@ -1,8 +1,8 @@
 package josehomenhuck.planejamais.domain.financialrecord.service;
 
+import josehomenhuck.planejamais.application.financialrecord.dto.FinancialFindAllResponse;
 import josehomenhuck.planejamais.application.financialrecord.dto.FinancialRecordRequest;
 import josehomenhuck.planejamais.application.financialrecord.dto.FinancialSummary;
-import josehomenhuck.planejamais.application.financialrecord.dto.FindAllResponse;
 import josehomenhuck.planejamais.application.financialrecord.impl.FinancialRecordServiceImpl;
 import josehomenhuck.planejamais.application.financialrecord.mapper.FinancialRecordMapper;
 import josehomenhuck.planejamais.application.user.mapper.UserMapper;
@@ -122,7 +122,7 @@ class FinancialRecordServiceTest {
         when(financialRecordRepository.findAllByUserEmail(email)).thenReturn(records);
 
         // When
-        FindAllResponse result = underTest.findAllByUserEmail(email);
+        FinancialFindAllResponse result = underTest.findAllByUserEmail(email);
 
         // Then
         assertNotNull(result);
