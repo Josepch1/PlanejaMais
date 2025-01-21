@@ -14,7 +14,6 @@ import josehomenhuck.planejamais.domain.user.entity.User;
 import josehomenhuck.planejamais.domain.user.service.UserService;
 import josehomenhuck.planejamais.infrastructure.repository.GoalRepository;
 
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,10 +29,10 @@ public class GoalServiceImpl implements GoalService {
     private final FinancialRecordService financialRecordService;
 
     public GoalServiceImpl(GoalRepository goalRepository,
-                           GoalMapper goalMapper,
-                           UserService userService,
-                           UserMapper userMapper,
-                           FinancialRecordService financialRecordService) {
+            GoalMapper goalMapper,
+            UserService userService,
+            UserMapper userMapper,
+            FinancialRecordService financialRecordService) {
         this.goalRepository = goalRepository;
         this.goalMapper = goalMapper;
         this.userService = userService;

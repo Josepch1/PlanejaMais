@@ -33,240 +33,227 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class FinancialRecordServiceTest {
 
-    private FinancialRecordServiceImpl underTest;
+        private FinancialRecordServiceImpl underTest;
 
-    @Mock
-    private FinancialRecordRepository financialRecordRepository;
+        @Mock
+        private FinancialRecordRepository financialRecordRepository;
 
-    @Mock
-    private UserService userService;
+        @Mock
+        private UserService userService;
 
-    @Mock
-    private GoalService goalService;
+        @Mock
+        private GoalService goalService;
 
-    private FinancialRecordMapper financialRecordMapper;
+        private FinancialRecordMapper financialRecordMapper = new FinancialRecordMapper();
 
-    private GoalMapper goalMapper;
+        private GoalMapper goalMapper = new GoalMapper();
 
-    private UserMapper userMapper;
+        private UserMapper userMapper = new UserMapper();
 
-    @BeforeEach
-    void setUp() {
-        financialRecordMapper = new FinancialRecordMapper();
-        userMapper = new UserMapper();
-        goalMapper = new GoalMapper();
-        underTest = new FinancialRecordServiceImpl(financialRecordRepository, financialRecordMapper, userService, userMapper, goalService);
-    }
+        @BeforeEach
+        void setUp() {
+                underTest = new FinancialRecordServiceImpl(financialRecordRepository, financialRecordMapper,
+                                userService, userMapper, goalService);
+        }
 
-    private FinancialRecordRequest createRecordRequest(String email, String description, FinancialRecordType type, double value) {
-        return FinancialRecordRequest.builder()
-                .userEmail(email)
-                .description(description)
-                .type(type)
-                .value(value)
-                .build();
-    }
+        private FinancialRecordRequest createRecordRequest(String email, String description, FinancialRecordType type,
+                        double value) {
+                return FinancialRecordRequest.builder()
+                                .userEmail(email)
+                                .description(description)
+                                .type(type)
+                                .value(value)
+                                .build();
+        }
 
+        private User createDefaultUser(String email) {
+                return User.builder()
+                                .id(UUID.randomUUID().toString())
+                                .email(email)
+                                .name("Test User")
+                                .password("123456")
+                                .build();
+        }
 
-    @Test
-    void create() {
-        // Given
-        String email = "test@test.com";
+        @Test
+        void create() {
+                // Given
+                String email = "test@test.com";
 
-        User newUser = User.builder()
-                .email(email)
-                .name("Test")
-                .password("123456")
-                .build();
+                User user = createDefaultUser(email);
 
-        FinancialRecordRequest recordRequest = createRecordRequest(email, "Test", FinancialRecordType.INCOME, 100.0);
+                FinancialRecordRequest recordRequest = createRecordRequest(email, "Test", FinancialRecordType.INCOME,
+                                100.0);
 
-        when(userService.findByEmail(newUser.getEmail())).thenReturn(newUser);
+                when(userService.findByEmail(user.getEmail())).thenReturn(user);
 
-        FinancialRecord financialRecord = financialRecordMapper.toRecord(recordRequest);
-        financialRecord.setUser(newUser);
+                FinancialRecord financialRecord = financialRecordMapper.toRecord(recordRequest);
+                financialRecord.setUser(user);
 
-        when(financialRecordRepository.save(any(FinancialRecord.class))).thenReturn(financialRecord);
+                when(financialRecordRepository.save(any(FinancialRecord.class))).thenReturn(financialRecord);
 
-        // When
-        underTest.create(recordRequest);
+                // When
+                underTest.create(recordRequest);
 
-        // Then
-        verify(financialRecordRepository).save(any(FinancialRecord.class));
-    }
+                // Then
+                verify(financialRecordRepository).save(any(FinancialRecord.class));
+        }
 
+        @Test
+        void findAllByUserEmail() {
+                // Given
+                String email = "test@test.com";
 
-    @Test
-    void findAllByUserEmail() {
-        // Given
-        String email = "test@test.com";
+                User user = createDefaultUser(email);
 
-        User user = User.builder()
-                .id(UUID.randomUUID().toString())
-                .email(email)
-                .name("Test User")
-                .password("123456")
-                .build();
+                when(userService.findByEmail(user.getEmail())).thenReturn(user);
 
-        when(userService.findByEmail(user.getEmail())).thenReturn(user);
+                FinancialRecordRequest recordRequest1 = createRecordRequest(email, "Test", FinancialRecordType.INCOME,
+                                100.0);
 
-        FinancialRecordRequest recordRequest1 = createRecordRequest(email, "Test", FinancialRecordType.INCOME, 100.0);
+                FinancialRecord record1 = financialRecordMapper.toRecord(recordRequest1);
+                record1.setUser(user);
 
-        FinancialRecord record1 = financialRecordMapper.toRecord(recordRequest1);
-        record1.setUser(user);
+                FinancialRecordRequest recordRequest2 = createRecordRequest(email, "SecondTest",
+                                FinancialRecordType.EXPENSE, 10.0);
 
-        FinancialRecordRequest recordRequest2 = createRecordRequest(email, "SecondTest", FinancialRecordType.EXPENSE, 10.0);
+                FinancialRecord record2 = financialRecordMapper.toRecord(recordRequest2);
+                record2.setUser(user);
 
-        FinancialRecord record2 = financialRecordMapper.toRecord(recordRequest2);
-        record2.setUser(user);
+                List<FinancialRecord> records = List.of(record1, record2);
+                when(financialRecordRepository.findAllByUserEmail(email)).thenReturn(records);
 
-        List<FinancialRecord> records = List.of(record1, record2);
-        when(financialRecordRepository.findAllByUserEmail(email)).thenReturn(records);
+                // When
+                FinancialFindAllResponse result = underTest.findAllByUserEmail(email);
 
-        // When
-        FinancialFindAllResponse result = underTest.findAllByUserEmail(email);
+                // Then
+                assertNotNull(result);
+                verify(financialRecordRepository).findAllByUserEmail(email);
+                verifyNoMoreInteractions(financialRecordRepository);
+        }
 
-        // Then
-        assertNotNull(result);
-        verify(financialRecordRepository).findAllByUserEmail(email);
-        verifyNoMoreInteractions(financialRecordRepository);
-    }
+        @Test
+        void getSummary() {
+                // Given
+                String email = "test@test.com";
 
+                User user = createDefaultUser(email);
 
-    @Test
-    void getSummary() {
-        // Given
-        String email = "test@test.com";
+                when(userService.findByEmail(user.getEmail())).thenReturn(user);
 
-        User user = User.builder()
-                .id(UUID.randomUUID().toString())
-                .email(email)
-                .name("Test User")
-                .password("123456")
-                .build();
+                UserResponse userResponse = userMapper.toResponse(user);
 
-        when(userService.findByEmail(user.getEmail())).thenReturn(user);
+                FinancialRecordRequest recordRequest1 = createRecordRequest(email, "Test", FinancialRecordType.INCOME,
+                                100.0);
 
-        UserResponse userResponse = userMapper.toResponse(user);
+                FinancialRecord record1 = financialRecordMapper.toRecord(recordRequest1);
+                assertNotNull(record1, "record1 should not be null");
 
-        FinancialRecordRequest recordRequest1 = createRecordRequest(email, "Test", FinancialRecordType.INCOME, 100.0);
+                FinancialRecordRequest recordRequest2 = createRecordRequest(email, "SecondTest",
+                                FinancialRecordType.EXPENSE, 10.0);
 
-        FinancialRecord record1 = financialRecordMapper.toRecord(recordRequest1);
-        assertNotNull(record1, "record1 should not be null");
+                FinancialRecord record2 = financialRecordMapper.toRecord(recordRequest2);
+                assertNotNull(record2, "record2 should not be null");
 
-        FinancialRecordRequest recordRequest2 = createRecordRequest(email, "SecondTest", FinancialRecordType.EXPENSE, 10.0);
+                List<FinancialRecord> records = List.of(record1, record2);
+                when(financialRecordRepository.findAllByUserEmail(email)).thenReturn(records);
 
-        FinancialRecord record2 = financialRecordMapper.toRecord(recordRequest2);
-        assertNotNull(record2, "record2 should not be null");
+                Goal goal1 = Goal.builder()
+                                .id(1L)
+                                .name("Goal 1")
+                                .targetValue(1000.0)
+                                .build();
 
-        List<FinancialRecord> records = List.of(record1, record2);
-        when(financialRecordRepository.findAllByUserEmail(email)).thenReturn(records);
+                Goal goal2 = Goal.builder()
+                                .id(2L)
+                                .name("Goal 2")
+                                .targetValue(2000.0)
+                                .build();
 
-        Goal goal1 = Goal.builder()
-                .id(1L)
-                .name("Goal 1")
-                .targetValue(1000.0)
-                .build();
+                GoalResponse goalResponse1 = goalMapper.toResponse(goal1);
+                GoalResponse goalResponse2 = goalMapper.toResponse(goal2);
 
-        Goal goal2 = Goal.builder()
-                .id(2L)
-                .name("Goal 2")
-                .targetValue(2000.0)
-                .build();
+                GoalFindAllResponse goalFindAllResponse = GoalFindAllResponse.builder()
+                                .user(userResponse)
+                                .goals(List.of(goalResponse1, goalResponse2))
+                                .build();
 
-        GoalResponse goalResponse1 = goalMapper.toResponse(goal1);
-        GoalResponse goalResponse2 = goalMapper.toResponse(goal2);
+                when(goalService.findAllByUserEmail(email)).thenReturn(goalFindAllResponse);
 
-        GoalFindAllResponse goalFindAllResponse = GoalFindAllResponse.builder()
-                .user(userResponse)
-                .goals(List.of(goalResponse1, goalResponse2))
-                .build();
+                // When
+                FinancialSummary result = underTest.getSummary(email);
 
-        when(goalService.findAllByUserEmail(email)).thenReturn(goalFindAllResponse);
+                // Then
+                assertNotNull(result);
+                assertEquals(90.0, result.getBalance());
+                assertEquals(100.0, result.getTotalIncome());
+                assertEquals(10.0, result.getTotalExpense());
+        }
 
-        // When
-        FinancialSummary result = underTest.getSummary(email);
+        @Test
+        void update() {
+                // Given
+                String email = "test@test.com";
 
-        // Then
-        assertNotNull(result);
-        assertEquals(90.0, result.getBalance());
-        assertEquals(100.0, result.getTotalIncome());
-        assertEquals(10.0, result.getTotalExpense());
-    }
+                User user = createDefaultUser(email);
 
+                FinancialRecord existingRecord = FinancialRecord.builder()
+                                .id(UUID.randomUUID().toString())
+                                .user(user)
+                                .description("Old Description")
+                                .type(FinancialRecordType.EXPENSE)
+                                .value(50.0)
+                                .build();
 
-    @Test
-    void update() {
-        // Given
-        String email = "test@test.com";
+                FinancialRecordRequest updatedRequest = FinancialRecordRequest.builder()
+                                .userEmail(email)
+                                .description("Updated Description")
+                                .type(FinancialRecordType.INCOME)
+                                .value(100.0)
+                                .build();
 
-        User user = User.builder()
-                .email(email)
-                .name("Test User")
-                .password("123456")
-                .build();
+                FinancialRecord updatedRecord = financialRecordMapper.toRecord(updatedRequest);
+                updatedRecord.setId(existingRecord.getId());
+                updatedRecord.setUser(user);
 
-        FinancialRecord existingRecord = FinancialRecord.builder()
-                .id(UUID.randomUUID().toString())
-                .user(user)
-                .description("Old Description")
-                .type(FinancialRecordType.EXPENSE)
-                .value(50.0)
-                .build();
+                when(financialRecordRepository.findById(existingRecord.getId()))
+                                .thenReturn(Optional.of(existingRecord));
+                when(financialRecordRepository.save(any(FinancialRecord.class))).thenReturn(updatedRecord);
 
-        FinancialRecordRequest updatedRequest = FinancialRecordRequest.builder()
-                .userEmail(email)
-                .description("Updated Description")
-                .type(FinancialRecordType.INCOME)
-                .value(100.0)
-                .build();
+                // When
+                underTest.update(existingRecord.getId(), updatedRequest);
 
-        FinancialRecord updatedRecord = financialRecordMapper.toRecord(updatedRequest);
-        updatedRecord.setId(existingRecord.getId());
-        updatedRecord.setUser(user);
+                // Then
+                verify(financialRecordRepository).save(any(FinancialRecord.class));
+                verifyNoMoreInteractions(financialRecordRepository);
+        }
 
-        when(financialRecordRepository.findById(existingRecord.getId())).thenReturn(Optional.of(existingRecord));
-        when(financialRecordRepository.save(any(FinancialRecord.class))).thenReturn(updatedRecord);
+        @Test
+        void deleteById() {
+                // Given
+                String email = "test@test.com";
 
-        // When
-        underTest.update(existingRecord.getId(), updatedRequest);
+                FinancialRecordRequest recordRequest = createRecordRequest(email, "Test", FinancialRecordType.INCOME,
+                                100.0);
 
-        // Then
-        verify(financialRecordRepository).save(any(FinancialRecord.class));
-        verifyNoMoreInteractions(financialRecordRepository);
-    }
+                User user = createDefaultUser(email);
 
+                // Set the User in the FinancialRecord
+                String id = UUID.randomUUID().toString();
+                FinancialRecord financialRecord = financialRecordMapper.toRecord(recordRequest);
+                financialRecord.setId(id);
+                financialRecord.setUser(user); // Ensure the User is set here
 
-    @Test
-    void deleteById() {
-        // Given
-        String email = "test@test.com";
+                assertNotNull(financialRecord, "record should not be null");
 
-        FinancialRecordRequest recordRequest = createRecordRequest(email, "Test", FinancialRecordType.INCOME, 100.0);
+                // Mock findById to return the record
+                when(financialRecordRepository.findById(id)).thenReturn(Optional.of(financialRecord));
 
-        // Create a new User for the FinancialRecord
-        User user = User.builder()
-                .email(email)
-                .name("Test User")
-                .password("123456")
-                .build();
+                // When
+                underTest.deleteById(id);
 
-        // Set the User in the FinancialRecord
-        String id = UUID.randomUUID().toString();
-        FinancialRecord financialRecord = financialRecordMapper.toRecord(recordRequest);
-        financialRecord.setId(id);
-        financialRecord.setUser(user);  // Ensure the User is set here
-
-        assertNotNull(financialRecord, "record should not be null");
-
-        // Mock findById to return the record
-        when(financialRecordRepository.findById(id)).thenReturn(Optional.of(financialRecord));
-
-        // When
-        underTest.deleteById(id);
-
-        // Then
-        verify(financialRecordRepository).deleteById(id);
-        verifyNoMoreInteractions(financialRecordRepository);
-    }
+                // Then
+                verify(financialRecordRepository).deleteById(id);
+                verifyNoMoreInteractions(financialRecordRepository);
+        }
 }
