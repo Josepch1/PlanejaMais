@@ -84,7 +84,7 @@ class FinancialRecordServiceTest {
         when(userService.findByEmail(newUser.getEmail())).thenReturn(newUser);
 
         FinancialRecord financialRecord = financialRecordMapper.toRecord(recordRequest);
-        financialRecord.setUser(newUser); // Ensure the user is set
+        financialRecord.setUser(newUser);
 
         when(financialRecordRepository.save(any(FinancialRecord.class))).thenReturn(financialRecord);
 
