@@ -1,7 +1,6 @@
 package josehomenhuck.planejamais.domain.goal.service;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
