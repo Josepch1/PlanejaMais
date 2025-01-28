@@ -5,15 +5,9 @@ import josehomenhuck.planejamais.application.financialrecord.dto.FinancialRecord
 import josehomenhuck.planejamais.application.financialrecord.dto.FinancialSummary;
 import josehomenhuck.planejamais.application.financialrecord.impl.FinancialRecordServiceImpl;
 import josehomenhuck.planejamais.application.financialrecord.mapper.FinancialRecordMapper;
-import josehomenhuck.planejamais.application.goal.dto.GoalFindAllResponse;
-import josehomenhuck.planejamais.application.goal.dto.GoalResponse;
-import josehomenhuck.planejamais.application.goal.mapper.GoalMapper;
-import josehomenhuck.planejamais.application.user.dto.UserResponse;
 import josehomenhuck.planejamais.application.user.mapper.UserMapper;
 import josehomenhuck.planejamais.domain.financialrecord.entity.FinancialRecord;
 import josehomenhuck.planejamais.domain.financialrecord.enums.FinancialRecordType;
-import josehomenhuck.planejamais.domain.goal.entity.Goal;
-import josehomenhuck.planejamais.domain.goal.service.GoalService;
 import josehomenhuck.planejamais.domain.user.entity.User;
 import josehomenhuck.planejamais.domain.user.service.UserService;
 import josehomenhuck.planejamais.infrastructure.repository.FinancialRecordRepository;
@@ -41,19 +35,14 @@ class FinancialRecordServiceTest {
         @Mock
         private UserService userService;
 
-        @Mock
-        private GoalService goalService;
-
         private FinancialRecordMapper financialRecordMapper = new FinancialRecordMapper();
-
-        private GoalMapper goalMapper = new GoalMapper();
 
         private UserMapper userMapper = new UserMapper();
 
         @BeforeEach
         void setUp() {
                 underTest = new FinancialRecordServiceImpl(financialRecordRepository, financialRecordMapper,
-                                userService, userMapper, goalService);
+                                userService, userMapper);
         }
 
         private FinancialRecordRequest createRecordRequest(String email, String description, FinancialRecordType type,
@@ -141,8 +130,6 @@ class FinancialRecordServiceTest {
 
                 when(userService.findByEmail(user.getEmail())).thenReturn(user);
 
-                UserResponse userResponse = userMapper.toResponse(user);
-
                 FinancialRecordRequest recordRequest1 = createRecordRequest(email, "Test", FinancialRecordType.INCOME,
                                 100.0);
 
@@ -157,28 +144,6 @@ class FinancialRecordServiceTest {
 
                 List<FinancialRecord> records = List.of(record1, record2);
                 when(financialRecordRepository.findAllByUserEmail(email)).thenReturn(records);
-
-                Goal goal1 = Goal.builder()
-                                .id(1L)
-                                .name("Goal 1")
-                                .targetValue(1000.0)
-                                .build();
-
-                Goal goal2 = Goal.builder()
-                                .id(2L)
-                                .name("Goal 2")
-                                .targetValue(2000.0)
-                                .build();
-
-                GoalResponse goalResponse1 = goalMapper.toResponse(goal1);
-                GoalResponse goalResponse2 = goalMapper.toResponse(goal2);
-
-                GoalFindAllResponse goalFindAllResponse = GoalFindAllResponse.builder()
-                                .user(userResponse)
-                                .goals(List.of(goalResponse1, goalResponse2))
-                                .build();
-
-                when(goalService.findAllByUserEmail(email)).thenReturn(goalFindAllResponse);
 
                 // When
                 FinancialSummary result = underTest.getSummary(email);
